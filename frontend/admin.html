@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - System Status</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-box">
+                <h1>Admin Login</h1>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <div id="loginError" class="error-message"></div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel" style="display: none;">
+            <header class="admin-header">
+                <h1>Admin Panel</h1>
+                <div>
+                    <a href="index.html" class="btn btn-secondary">View Status Page</a>
+                    <button type="button" onclick="restartService()" class="btn btn-secondary" style="background-color: #ed8936;">Restart Service</button>
+                    <button onclick="logout()" class="btn btn-secondary">Logout</button>
+                </div>
+            </header>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('incidents')">Incidents</button>
+                <button class="tab-btn" onclick="showTab('components')">Components</button>
+                <button class="tab-btn" onclick="showTab('maintenances')">Maintenances</button>
+                <button class="tab-btn" onclick="showTab('users')">Users & Access</button>
+            </div>
+
+            <!-- Incidents Tab -->
+            <div id="incidentsTab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Incidents</h2>
+                    <button onclick="showIncidentModal()" class="btn btn-primary">+ Create Incident</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Impact</th>
+                            <th>Status</th>
+                            <th>Started</th>
+                            <th>Resolved</th>
+                            <th>Visibility</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidentsTableBody">
+                        <!-- Incidents will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Components Tab -->
+            <div id="componentsTab" class="tab-content">
+                <div class="section-header">
+                    <h2>Components</h2>
+                    <button onclick="showComponentModal()" class="btn btn-primary">+ Add Component</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Group</th>
+                            <th>Status</th>
+                            <th>🟢 Prod NS</th>
+                            <th>🟢 Prod Ver</th>
+                            <th>🟣 Shadow NS</th>
+                            <th>🟣 Shadow Ver</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="componentsTableBody">
+                        <!-- Components will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Maintenances Tab -->
+            <div id="maintenancesTab" class="tab-content">
+                <div class="section-header">
+                    <h2>Scheduled Maintenance</h2>
+                    <button onclick="showMaintenanceModal()" class="btn btn-primary">+ Schedule Maintenance</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="maintenancesTableBody">
+                        <!-- Maintenances will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Users & Access Tab -->
+            <div id="usersTab" class="tab-content">
+                <div class="users-container">
+                    <!-- Users Section -->
+                    <div class="users-section">
+                        <div class="section-header">
+                            <h2>👥 User Management</h2>
+                            <button onclick="showUserModal()" class="btn btn-primary">+ Add User</button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Access Control Section -->
+                    <div class="access-section">
+                        <div class="section-header">
+                            <h2>🔐 Role Permissions</h2>
+                        </div>
+                        <div class="roles-grid">
+                            <!-- Admin Role -->
+                            <div class="role-card">
+                                <div class="role-header">
+                                    <span class="role-icon">👑</span>
+                                    <span class="role-name">Admin</span>
+                                    <span class="role-badge admin">Full Access</span>
+                                </div>
+                                <div class="role-permissions">
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Incidents</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Components</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Maintenances</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Users</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Export Reports</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Restart Service</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Editor Role -->
+                            <div class="role-card">
+                                <div class="role-header">
+                                    <span class="role-icon">✏️</span>
+                                    <span class="role-name">Editor</span>
+                                    <span class="role-badge editor">Limited Access</span>
+                                </div>
+                                <div class="role-permissions">
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Incidents</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Components</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Manage Maintenances</span>
+                                    </div>
+                                    <div class="permission-item denied">
+                                        <span class="permission-icon">✕</span>
+                                        <span>Manage Users</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Export Reports</span>
+                                    </div>
+                                    <div class="permission-item denied">
+                                        <span class="permission-icon">✕</span>
+                                        <span>Restart Service</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Viewer Role -->
+                            <div class="role-card">
+                                <div class="role-header">
+                                    <span class="role-icon">👁️</span>
+                                    <span class="role-name">Viewer</span>
+                                    <span class="role-badge viewer">Read Only</span>
+                                </div>
+                                <div class="role-permissions">
+                                    <div class="permission-item partial">
+                                        <span class="permission-icon">◐</span>
+                                        <span>View Incidents</span>
+                                    </div>
+                                    <div class="permission-item partial">
+                                        <span class="permission-icon">◐</span>
+                                        <span>View Components</span>
+                                    </div>
+                                    <div class="permission-item partial">
+                                        <span class="permission-icon">◐</span>
+                                        <span>View Maintenances</span>
+                                    </div>
+                                    <div class="permission-item denied">
+                                        <span class="permission-icon">✕</span>
+                                        <span>Manage Users</span>
+                                    </div>
+                                    <div class="permission-item granted">
+                                        <span class="permission-icon">✓</span>
+                                        <span>Export Reports</span>
+                                    </div>
+                                    <div class="permission-item denied">
+                                        <span class="permission-icon">✕</span>
+                                        <span>Restart Service</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Session Info -->
+                    <div class="session-section">
+                        <div class="section-header">
+                            <h2>📋 Current Session</h2>
+                        </div>
+                        <div class="session-info">
+                            <div class="session-item">
+                                <span class="session-label">Logged in as:</span>
+                                <span class="session-value" id="currentUsername">-</span>
+                            </div>
+                            <div class="session-item">
+                                <span class="session-label">Role:</span>
+                                <span class="session-value" id="currentUserRole">-</span>
+                            </div>
+                            <div class="session-item">
+                                <span class="session-label">Session expires:</span>
+                                <span class="session-value" id="sessionExpiry">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Component Modal -->
+    <div id="componentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('componentModal')">&times;</span>
+            <h2 id="componentModalTitle">Add Component</h2>
+            <form id="componentForm">
+                <input type="hidden" id="componentId">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="componentName" required>
+                </div>
+                <div class="form-group">
+                    <label>Group</label>
+                    <input type="text" id="componentGroup">
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="componentStatus" required>
+                        <option value="operational">Operational</option>
+                        <option value="degraded">Degraded</option>
+                        <option value="partial_outage">Partial Outage</option>
+                        <option value="major_outage">Major Outage</option>
+                        <option value="potential_outage">Potential Outage (URL Unreachable)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sort Order</label>
+                    <input type="number" id="componentSortOrder" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Version (Manual)</label>
+                    <input type="text" id="componentVersion" placeholder="e.g. 2.1.0, v3.5">
+                </div>
+                
+                <!-- PRODUCTION Version Detection -->
+                <div class="form-section-divider" style="border-top: 2px solid #48bb78; margin: 20px 0; padding-top: 15px; background: linear-gradient(to right, #f0fff4, transparent); padding: 15px; border-radius: 8px;">
+                    <label style="font-weight: 600; color: #276749; font-size: 14px;">🟢 PRODUCTION - Auto Version Detection</label>
+                </div>
+                
+                <div class="form-group">
+                    <label>Production URL</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="componentVersionUrl" placeholder="e.g. https://sportswidget.example.com/color.json" style="flex: 1;">
+                        <button type="button" onclick="previewVersionUrl('production')" class="btn btn-secondary btn-sm" style="white-space: nowrap;">Test URL</button>
+                    </div>
+                </div>
+                
+                <div id="versionPreviewResult" style="display: none; margin-top: 10px; padding: 12px; background: #f0fff4; border-radius: 6px; border: 1px solid #c6f6d5;">
+                    <div style="font-size: 12px; color: #276749; margin-bottom: 8px;">Production Preview:</div>
+                    <div id="versionPreviewContent"></div>
+                </div>
+                
+                <div class="form-row" style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Production Namespace</label>
+                        <input type="text" id="componentNamespace" readonly style="background: #f0fff4; color: #276749; border-color: #c6f6d5;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Production Version</label>
+                        <input type="text" id="componentDetectedVersion" readonly style="background: #f0fff4; color: #276749; border-color: #c6f6d5;">
+                    </div>
+                </div>
+                
+                <div id="versionLastChecked" style="font-size: 12px; color: #718096; margin-bottom: 15px; display: none;">
+                    Last checked: <span id="versionLastCheckedTime">-</span>
+                    <button type="button" onclick="refreshComponentVersion('production')" class="btn btn-sm" style="margin-left: 10px; padding: 4px 10px; font-size: 11px;">🔄 Refresh</button>
+                </div>
+                
+                <!-- SHADOW Version Detection -->
+                <div class="form-section-divider" style="border-top: 2px solid #805ad5; margin: 20px 0; padding-top: 15px; background: linear-gradient(to right, #faf5ff, transparent); padding: 15px; border-radius: 8px;">
+                    <label style="font-weight: 600; color: #553c9a; font-size: 14px;">🟣 SHADOW - Auto Version Detection</label>
+                </div>
+                
+                <div class="form-group">
+                    <label>Shadow URL</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="componentShadowVersionUrl" placeholder="e.g. https://shadow.sportswidget.example.com/color.json" style="flex: 1;">
+                        <button type="button" onclick="previewVersionUrl('shadow')" class="btn btn-secondary btn-sm" style="white-space: nowrap;">Test URL</button>
+                    </div>
+                </div>
+                
+                <div id="shadowVersionPreviewResult" style="display: none; margin-top: 10px; padding: 12px; background: #faf5ff; border-radius: 6px; border: 1px solid #e9d8fd;">
+                    <div style="font-size: 12px; color: #553c9a; margin-bottom: 8px;">Shadow Preview:</div>
+                    <div id="shadowVersionPreviewContent"></div>
+                </div>
+                
+                <div class="form-row" style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Shadow Namespace</label>
+                        <input type="text" id="componentShadowNamespace" readonly style="background: #faf5ff; color: #553c9a; border-color: #e9d8fd;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Shadow Version</label>
+                        <input type="text" id="componentShadowDetectedVersion" readonly style="background: #faf5ff; color: #553c9a; border-color: #e9d8fd;">
+                    </div>
+                </div>
+                
+                <div id="shadowVersionLastChecked" style="font-size: 12px; color: #718096; margin-bottom: 15px; display: none;">
+                    Last checked: <span id="shadowVersionLastCheckedTime">-</span>
+                    <button type="button" onclick="refreshComponentVersion('shadow')" class="btn btn-sm" style="margin-left: 10px; padding: 4px 10px; font-size: 11px;">🔄 Refresh</button>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="componentVisible" checked style="width: 18px; height: 18px;">
+                        <span>Visible on Status Page</span>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" onclick="closeModal('componentModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Incident Modal -->
+    <div id="incidentModal" class="modal">
+        <div class="modal-content modal-fullscreen">
+            <div class="modal-header">
+                <h2 id="incidentModalTitle">Create Incident</h2>
+                <div class="modal-header-actions">
+                    <button type="button" onclick="showAIUploadModal()" class="btn btn-ai-upload">
+                        <span class="ai-icon">🤖</span> Upload Details
+                    </button>
+                    <button type="button" onclick="acceptAllAndSave()" class="btn btn-accept-all" id="acceptAllSaveBtn" style="display: none;">
+                        <span>✓</span> Accept All & Save
+                    </button>
+                    <button type="button" onclick="previewIncidentPDF()" class="btn btn-preview-pdf" id="previewPDFBtn">
+                        <span>📄</span> Preview PDF
+                    </button>
+                    <span class="close" onclick="closeModal('incidentModal')">&times;</span>
+                </div>
+            </div>
+            <form id="incidentForm" class="incident-form-fullscreen">
+                <input type="hidden" id="incidentId">
+                
+                <div class="form-section">
+                    <h3 class="section-title">Basic Information</h3>
+                    
+                    <!-- Incident Number & Title Row -->
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Incident Number</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('incident_number')" class="btn btn-sm btn-accept-ai" id="acceptIncidentNumberBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('incident_number')" class="btn btn-sm btn-reject-ai" id="rejectIncidentNumberBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="text" id="incidentNumber" placeholder="Auto-generated if left empty">
+                            <div id="aiSuggestionIncidentNumber" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Title *</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('title')" class="btn btn-sm btn-accept-ai" id="acceptTitleBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('title')" class="btn btn-sm btn-reject-ai" id="rejectTitleBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="text" id="incidentTitle" required>
+                            <div id="aiSuggestionTitle" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Impact & Status Row -->
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Impact *</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('impact')" class="btn btn-sm btn-accept-ai" id="acceptImpactBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('impact')" class="btn btn-sm btn-reject-ai" id="rejectImpactBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <select id="incidentImpact" required>
+                                <option value="P2">P2</option>
+                                <option value="P1">P1</option>
+                            </select>
+                            <div id="aiSuggestionImpact" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Status *</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('status')" class="btn btn-sm btn-accept-ai" id="acceptStatusBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('status')" class="btn btn-sm btn-reject-ai" id="rejectStatusBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <select id="incidentStatus" required>
+                                <option value="identified">Identified</option>
+                                <option value="monitoring">Monitoring</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                            <div id="aiSuggestionStatus" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visibility & Domain Distribution Row -->
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label>Visibility</label>
+                            <select id="incidentVisibility">
+                                <option value="public">Public</option>
+                                <option value="internal">Internal</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Interim Domain Distribution</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('domain_distribution')" class="btn btn-sm btn-accept-ai" id="acceptDomainDistributionBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('domain_distribution')" class="btn btn-sm btn-reject-ai" id="rejectDomainDistributionBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <select id="incidentDomainDistribution">
+                                <option value="">-- Select --</option>
+                                <option value="Internal">Internal</option>
+                                <option value="External">External</option>
+                                <option value="Non-Sport">Non-Sport</option>
+                            </select>
+                            <div id="aiSuggestionDomainDistribution" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timeline Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Timeline</h3>
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>Start Time (UTC)</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('started_at')" class="btn btn-sm btn-accept-ai" id="acceptStartedAtBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('started_at')" class="btn btn-sm btn-reject-ai" id="rejectStartedAtBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="datetime-local" id="incidentStartedAt">
+                            <div id="aiSuggestionStartedAt" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                        <div class="form-group form-group-half">
+                            <div class="field-header">
+                                <label>End Time (UTC)</label>
+                                <div class="field-actions">
+                                    <button type="button" onclick="acceptAISuggestion('resolved_at')" class="btn btn-sm btn-accept-ai" id="acceptResolvedAtBtn" style="display: none;">
+                                        <span>✓</span> Accept AI
+                                    </button>
+                                    <button type="button" onclick="rejectAISuggestion('resolved_at')" class="btn btn-sm btn-reject-ai" id="rejectResolvedAtBtn" style="display: none;">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="datetime-local" id="incidentResolvedAt">
+                            <div id="aiSuggestionResolvedAt" class="ai-suggestion-preview ai-suggestion-inline" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Incident Details</h3>
+                    
+                    <!-- Summary Field -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin-bottom: 0;">Summary</label>
+                            <div class="field-actions">
+                                <button type="button" onclick="acceptAISuggestion('summary')" class="btn btn-sm btn-accept-ai" id="acceptSummaryBtn" style="display: none;">
+                                    <span>✓</span> Accept AI
+                                </button>
+                                <button type="button" onclick="rejectAISuggestion('summary')" class="btn btn-sm btn-reject-ai" id="rejectSummaryBtn" style="display: none;">
+                                    <span>✕</span>
+                                </button>
+                                <button type="button" onclick="saveField('summary')" class="btn btn-sm btn-save-field" id="saveSummaryBtn" style="display: none;">
+                                    <span class="save-icon">💾</span> Save
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="incidentSummary" rows="4" placeholder="Provide a brief summary of the incident..." oninput="showSaveButton('summary')"></textarea>
+                        <div id="aiSuggestionSummary" class="ai-suggestion-preview" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Affected Services Field -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin-bottom: 0;">Affected Services</label>
+                            <div class="field-actions">
+                                <button type="button" onclick="acceptAISuggestion('affected_services')" class="btn btn-sm btn-accept-ai" id="acceptAffectedServicesBtn" style="display: none;">
+                                    <span>✓</span> Accept AI
+                                </button>
+                                <button type="button" onclick="rejectAISuggestion('affected_services')" class="btn btn-sm btn-reject-ai" id="rejectAffectedServicesBtn" style="display: none;">
+                                    <span>✕</span>
+                                </button>
+                                <button type="button" onclick="saveField('affected_services')" class="btn btn-sm btn-save-field" id="saveAffectedServicesBtn" style="display: none;">
+                                    <span class="save-icon">💾</span> Save
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="incidentAffectedServices" rows="3" placeholder="Describe which services were affected (e.g., Gaming and logins were unavailable)" oninput="showSaveButton('affected_services')"></textarea>
+                        <div id="aiSuggestionAffectedServices" class="ai-suggestion-preview" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Root Cause Field -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin-bottom: 0;">Root Cause</label>
+                            <div class="field-actions">
+                                <button type="button" onclick="acceptAISuggestion('root_cause')" class="btn btn-sm btn-accept-ai" id="acceptRootCauseBtn" style="display: none;">
+                                    <span>✓</span> Accept AI
+                                </button>
+                                <button type="button" onclick="rejectAISuggestion('root_cause')" class="btn btn-sm btn-reject-ai" id="rejectRootCauseBtn" style="display: none;">
+                                    <span>✕</span>
+                                </button>
+                                <button type="button" onclick="saveField('root_cause')" class="btn btn-sm btn-save-field" id="saveRootCauseBtn" style="display: none;">
+                                    <span class="save-icon">💾</span> Save
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="incidentRootCause" rows="4" placeholder="Describe the root cause of the incident..." oninput="showSaveButton('root_cause')"></textarea>
+                        <div id="aiSuggestionRootCause" class="ai-suggestion-preview" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Resolution Notes Field -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin-bottom: 0;">Resolution Notes</label>
+                            <div class="field-actions">
+                                <button type="button" onclick="acceptAISuggestion('resolution_notes')" class="btn btn-sm btn-accept-ai" id="acceptResolutionNotesBtn" style="display: none;">
+                                    <span>✓</span> Accept AI
+                                </button>
+                                <button type="button" onclick="rejectAISuggestion('resolution_notes')" class="btn btn-sm btn-reject-ai" id="rejectResolutionNotesBtn" style="display: none;">
+                                    <span>✕</span>
+                                </button>
+                                <button type="button" onclick="saveField('resolution_notes')" class="btn btn-sm btn-save-field" id="saveResolutionNotesBtn" style="display: none;">
+                                    <span class="save-icon">💾</span> Save
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="incidentResolutionNotes" rows="4" placeholder="Describe how the incident was resolved..." oninput="showSaveButton('resolution_notes')"></textarea>
+                        <div id="aiSuggestionResolutionNotes" class="ai-suggestion-preview" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="form-section" style="display: none;">
+                    <h3 class="section-title">Affected Components</h3>
+                    <div class="form-group">
+                        <label>Select Affected Components</label>
+                        <div id="incidentComponents" class="components-checkbox-list">
+                            <!-- Will be populated with components as checkboxes -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="incidentUpdatesSection" class="form-section" style="display: none;">
+                    <h3 class="section-title">Timeline & Updates</h3>
+                    <div id="incidentUpdatesList" class="updates-list"></div>
+                    <div class="form-group">
+                        <label>Add Update</label>
+                        <textarea id="incidentUpdateMessage" rows="3" placeholder="Enter update message..."></textarea>
+                        <select id="incidentUpdateStatus" style="margin-top: 10px;">
+                            <option value="identified">Identified</option>
+                            <option value="monitoring">Monitoring</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                        <button type="button" onclick="addIncidentUpdate()" class="btn btn-secondary" style="margin-top: 10px;">Add Update</button>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Incident</button>
+                    <button type="button" onclick="closeModal('incidentModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Maintenance Modal -->
+    <div id="maintenanceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('maintenanceModal')">&times;</span>
+            <h2 id="maintenanceModalTitle">Schedule Maintenance</h2>
+            <form id="maintenanceForm">
+                <input type="hidden" id="maintenanceId">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="maintenanceTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Time *</label>
+                    <input type="datetime-local" id="maintenanceStart" required>
+                </div>
+                <div class="form-group">
+                    <label>End Time *</label>
+                    <input type="datetime-local" id="maintenanceEnd" required>
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="maintenanceStatus" required>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Affected Components</label>
+                    <div id="maintenanceComponents" class="components-checkbox-list">
+                        <!-- Will be populated with components as checkboxes -->
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" onclick="closeModal('maintenanceModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('userModal')">&times;</span>
+            <h2 id="userModalTitle">Add User</h2>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input type="text" id="userUsername" required minlength="3" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label id="passwordLabel">Password *</label>
+                    <input type="password" id="userPassword" minlength="6" placeholder="Enter password (min 6 characters)">
+                    <small id="passwordHint" class="form-hint">Leave empty to keep current password (when editing)</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="userPasswordConfirm" placeholder="Confirm password">
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <select id="userRole" required>
+                        <option value="admin">Admin - Full Access</option>
+                        <option value="editor">Editor - Limited Access</option>
+                        <option value="viewer">Viewer - Read Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="userStatus" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" id="userEmail" placeholder="user@example.com">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                    <button type="button" onclick="closeModal('userModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            <h2>🔐 Change Password</h2>
+            <form id="changePasswordForm">
+                <input type="hidden" id="changePasswordUserId">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="changePasswordUsername" readonly class="readonly-input">
+                </div>
+                <div class="form-group">
+                    <label>New Password *</label>
+                    <input type="password" id="newPassword" required minlength="6" placeholder="Enter new password (min 6 characters)">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password *</label>
+                    <input type="password" id="confirmNewPassword" required placeholder="Confirm new password">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                    <button type="button" onclick="closeModal('changePasswordModal')" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Upload Modal -->
+    <div id="aiUploadModal" class="modal">
+        <div class="modal-content ai-upload-modal">
+            <span class="close" onclick="closeModal('aiUploadModal')">&times;</span>
+            <h2>🤖 AI-Powered Incident Details</h2>
+            <p class="ai-modal-description">Paste incident details, logs, or upload a text file. AI will analyze and auto-fill the form fields.</p>
+            
+            <div class="ai-api-config">
+                <label>AI Provider:</label>
+                <select id="aiProvider" onchange="updateAIProviderInfo()">
+                    <option value="groq">Groq (Free - Recommended)</option>
+                    <option value="gemini">Google Gemini (Free)</option>
+                </select>
+                <div class="api-key-section">
+                    <label>API Key: <a href="#" id="getApiKeyLink" target="_blank" class="api-key-link">Get free key →</a></label>
+                    <input type="password" id="aiApiKey" placeholder="Enter your API key">
+                    <button type="button" onclick="toggleApiKeyVisibility()" class="btn btn-sm btn-secondary">👁️</button>
+                </div>
+                <p id="aiProviderInfo" class="ai-provider-info">Groq offers free API access with fast inference. Get your key at console.groq.com</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Paste Incident Details:</label>
+                <textarea id="aiInputText" rows="12" placeholder="Paste incident details, error logs, email content, or any text describing the incident...
+
+Example:
+- Incident start time and date
+- What services were affected
+- What caused the issue
+- How it was resolved
+- Timeline of events"></textarea>
+            </div>
+            
+            <div class="ai-upload-section">
+                <span>Or upload a text file:</span>
+                <input type="file" id="aiFileInput" accept=".txt,.log,.md,.json" onchange="handleAIFileUpload(event)">
+            </div>
+            
+            <div id="aiProcessingStatus" class="ai-processing-status" style="display: none;">
+                <div class="ai-spinner"></div>
+                <span>Analyzing with AI...</span>
+            </div>
+            
+            <div id="aiError" class="ai-error" style="display: none;"></div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="processWithAI()" class="btn btn-primary" id="aiProcessBtn">
+                    <span class="ai-icon">✨</span> Analyze & Fill Form
+                </button>
+                <button type="button" onclick="closeModal('aiUploadModal')" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>System Status</h1>
+            <a href="admin.html" class="admin-link">Login</a>
+        </header>
+
+        <!-- Components -->
+        <section class="components-section">
+            <h2>Components</h2>
+            <div class="components-grid" id="componentsGrid">
+                <!-- Components will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Active Incidents -->
+        <section class="incidents-section" id="activeIncidentsSection">
+            <h2>Active Incidents</h2>
+            <div class="incidents-list" id="activeIncidentsList">
+                <!-- Active incidents will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Resolved Incidents -->
+        <section class="incidents-section" id="resolvedIncidentsSection">
+            <h2>Resolved Incidents</h2>
+            <div class="incidents-list" id="resolvedIncidentsList">
+                <!-- Resolved incidents will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Scheduled Maintenance -->
+        <section class="maintenance-section" id="maintenanceSection" style="display: none;">
+            <h2>Scheduled Maintenance</h2>
+            <div class="maintenance-list" id="maintenanceList">
+                <!-- Maintenance will be loaded here -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Incident Detail Modal -->
+    <div class="modal" id="incidentModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeIncidentModal()">&times;</span>
+            <div id="incidentDetail"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
