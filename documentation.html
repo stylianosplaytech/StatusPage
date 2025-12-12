@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Page System - User Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .doc-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-green { background: #48bb78; color: white; }
+        .badge-blue { background: #4299e1; color: white; }
+        .badge-purple { background: #9f7aea; color: white; }
+
+        .content {
+            padding: 40px;
+        }
+
+        .toc {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 40px;
+        }
+
+        .toc h2 {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .toc-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            list-style: none;
+        }
+
+        .toc-list a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            transition: color 0.2s;
+        }
+
+        .toc-list a:hover {
+            color: #764ba2;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            color: #1a202c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #2d3748;
+            margin: 25px 0 15px 0;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            margin-top: 0;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card p {
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            position: relative;
+            padding: 20px 20px 20px 70px;
+            margin-bottom: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            counter-increment: step;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e53e3e;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-operational { background: #c6f6d5; color: #22543d; }
+        .status-degraded { background: #fefcbf; color: #744210; }
+        .status-partial { background: #fed7aa; color: #7c2d12; }
+        .status-major { background: #fed7d7; color: #742a2a; }
+        .status-potential { background: #fc8181; color: #fff; }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-warning {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+        }
+
+        .mockup {
+            margin: 25px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .mockup-header {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background: #fc8181; }
+        .mockup-dot.yellow { background: #f6e05e; }
+        .mockup-dot.green { background: #68d391; }
+
+        .mockup-content {
+            padding: 25px;
+            background: #f8fafc;
+        }
+
+        .mockup-caption {
+            background: #f7fafc;
+            padding: 12px 20px;
+            font-size: 13px;
+            color: #4a5568;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        /* Mock UI Components */
+        .mock-component {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mock-component-name {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .mock-version-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .mock-env-label {
+            font-weight: 700;
+            width: 55px;
+        }
+
+        .namespace-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .namespace-green { background: #c6f6d5; color: #22543d; }
+        .namespace-blue { background: #bee3f8; color: #2c5282; }
+        .namespace-red { background: #fed7d7; color: #742a2a; }
+
+        .mock-input {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mock-input-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 6px;
+        }
+
+        .mock-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .mock-btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .mock-table {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .mock-table th {
+            background: #f7fafc;
+            color: #4a5568;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .mock-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mock-section {
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .mock-section.purple {
+            background: linear-gradient(135deg, #faf5ff 0%, #e9d8fd 100%);
+            border-left-color: #9f7aea;
+        }
+
+        .mock-section-title {
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .mock-login {
+            max-width: 300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .mock-logo {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .content {
+                padding: 25px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f7fafc;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                padding: 0;
+            }
+            .doc-card {
+                box-shadow: none;
+            }
+            .print-btn {
+                display: none;
+            }
+            .mockup {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="doc-card">
+            <div class="header">
+                <h1>🚦 Status Page System</h1>
+                <p class="subtitle">A comprehensive, real-time status monitoring system for tracking service health, incidents, and version deployments across Production & Shadow environments.</p>
+                <div class="badges">
+                    <span class="badge badge-green">✓ Real-time Monitoring</span>
+                    <span class="badge badge-blue">Auto Version Detection</span>
+                    <span class="badge badge-purple">Incident Management</span>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Table of Contents -->
+                <div class="toc">
+                    <h2>📑 Table of Contents</h2>
+                    <ul class="toc-list">
+                        <li><a href="#overview">📋 Overview</a></li>
+                        <li><a href="#public-status">🌐 Public Status Page</a></li>
+                        <li><a href="#admin-login">🔐 Admin Login</a></li>
+                        <li><a href="#components">📊 Managing Components</a></li>
+                        <li><a href="#version-detection">🔄 Version Detection</a></li>
+                        <li><a href="#incidents">🚨 Incident Management</a></li>
+                        <li><a href="#maintenance">🔧 Maintenance</a></li>
+                        <li><a href="#users">👥 User Management</a></li>
+                    </ul>
+                </div>
+
+                <!-- Overview -->
+                <section id="overview">
+                    <h2>📋 Overview</h2>
+                    <p>The <strong>Status Page System</strong> provides real-time visibility into your service infrastructure. It automatically monitors version deployments across Production and Shadow environments, manages incidents, and communicates status to stakeholders.</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>🔄 Auto Version Detection</h4>
+                            <p>Automatically fetches version info from JSON endpoints every 5 minutes for both Production and Shadow environments.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🎨 Dynamic Namespace Colors</h4>
+                            <p>Namespace badges automatically color-coded based on their value (blue, green, red).</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🚨 Incident Management</h4>
+                            <p>Create, track, and communicate incidents with timeline updates and PDF export.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🤖 AI Integration</h4>
+                            <p>Extract incident details automatically using Groq or Google Gemini AI.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>📅 Maintenance Windows</h4>
+                            <p>Schedule and announce planned maintenance with affected components.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>⚡ Potential Outage Detection</h4>
+                            <p>Automatically sets status to "Potential Outage" when version URLs are unreachable.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Public Status Page -->
+                <section id="public-status">
+                    <h2>🌐 Public Status Page</h2>
+                    <p>The public status page displays all components with their current status, version information for both Production and Shadow environments, and any active incidents or scheduled maintenance.</p>
+
+                    <!-- Mock Public Status Page -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">status.example.com</span>
+                        </div>
+                        <div class="mockup-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h3 style="margin: 0; font-size: 18px;">🚦 System Status</h3>
+                                <span class="mock-btn-secondary mock-btn">Login</span>
+                            </div>
+                            <p style="font-size: 13px; margin-bottom: 20px; color: #718096;"><strong>Components</strong></p>
+                            
+                            <div class="mock-component">
+                                <div>
+                                    <div class="mock-component-name">888casino1.com</div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">PROD</span> <span class="namespace-badge namespace-green">Green</span> v25.10.2.0</span>
+                                    </div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">SHADOW</span> <span class="namespace-badge namespace-blue">Blue</span> v25.11.1.0</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-operational">OPERATIONAL</span>
+                            </div>
+
+                            <div class="mock-component">
+                                <div>
+                                    <div class="mock-component-name">10bet.uk</div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">PROD</span> <span class="namespace-badge namespace-blue">Blue</span> v25.10.2.0</span>
+                                    </div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">SHADOW</span> <span class="namespace-badge namespace-green">Green</span> v25.11.1.0</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-operational">OPERATIONAL</span>
+                            </div>
+
+                            <div class="mock-component">
+                                <div>
+                                    <div class="mock-component-name">betco.za</div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">PROD</span> <span class="namespace-badge namespace-red">Red</span> v25.10.2.0</span>
+                                    </div>
+                                    <div class="mock-version-row">
+                                        <span><span class="mock-env-label">SHADOW</span> <span class="namespace-badge namespace-green">Green</span> v25.10.2.0</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-operational">OPERATIONAL</span>
+                            </div>
+                        </div>
+                        <div class="mockup-caption">Public Status Page - Shows all components with Production & Shadow versions</div>
+                    </div>
+
+                    <h3>What Users See</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Component Name</strong></td>
+                                <td>Name of the service (e.g., 888casino1.com)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status Badge</strong></td>
+                                <td>Current operational status (Operational, Degraded, etc.)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PROD Row</strong></td>
+                                <td>Production namespace and version</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SHADOW Row</strong></td>
+                                <td>Shadow/Preview namespace and version</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Namespace Badge</strong></td>
+                                <td>Color-coded badge (e.g., <span class="namespace-badge namespace-green">Green</span>, <span class="namespace-badge namespace-blue">Blue</span>, <span class="namespace-badge namespace-red">Red</span>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Admin Login -->
+                <section id="admin-login">
+                    <h2>🔐 Admin Panel Login</h2>
+                    <p>Access the admin panel to manage components, incidents, maintenance, and users.</p>
+
+                    <!-- Mock Login Page -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">status.example.com/admin.html</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 50px;">
+                            <div class="mock-login">
+                                <div class="mock-logo">🚦</div>
+                                <h3 style="margin-bottom: 25px;">Admin Login</h3>
+                                <div class="mock-input-label" style="text-align: left;">Username</div>
+                                <div class="mock-input">admin</div>
+                                <div class="mock-input-label" style="text-align: left;">Password</div>
+                                <div class="mock-input">••••••••</div>
+                                <div class="mock-btn" style="width: 100%; text-align: center; margin-top: 10px;">Login</div>
+                            </div>
+                        </div>
+                        <div class="mockup-caption">Admin Panel Login Screen</div>
+                    </div>
+
+                    <ol class="steps">
+                        <li>Navigate to the Admin Panel URL</li>
+                        <li>Enter your <strong>Username</strong> and <strong>Password</strong></li>
+                        <li>Click <strong>"Login"</strong> to access the dashboard</li>
+                    </ol>
+                </section>
+
+                <!-- Components -->
+                <section id="components">
+                    <h2>📊 Managing Components</h2>
+                    <p>Components represent the services you want to monitor. Each component can track both Production and Shadow environment versions.</p>
+
+                    <!-- Mock Components List -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">Admin Panel - Components</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="margin: 0; font-size: 16px;">Components</h3>
+                                <span class="mock-btn">+ Add Component</span>
+                            </div>
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Group</th>
+                                        <th>Status</th>
+                                        <th>🟢 Prod NS</th>
+                                        <th>🟢 Prod Ver</th>
+                                        <th>🟣 Shadow NS</th>
+                                        <th>🟣 Shadow Ver</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>888casino1.com</strong></td>
+                                        <td>Europe</td>
+                                        <td><span class="status-badge status-operational">operational</span></td>
+                                        <td><span class="namespace-badge namespace-green">Green</span></td>
+                                        <td style="color: #22543d;">25.10.2.0 <span style="color: #68d391;">●</span></td>
+                                        <td><span class="namespace-badge namespace-blue">Blue</span></td>
+                                        <td style="color: #6b46c1;">25.11.1.0 <span style="color: #9f7aea;">●</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>10bet.uk</strong></td>
+                                        <td>UK</td>
+                                        <td><span class="status-badge status-operational">operational</span></td>
+                                        <td><span class="namespace-badge namespace-blue">Blue</span></td>
+                                        <td style="color: #22543d;">25.10.2.0 <span style="color: #68d391;">●</span></td>
+                                        <td><span class="namespace-badge namespace-green">Green</span></td>
+                                        <td style="color: #6b46c1;">25.11.1.0 <span style="color: #9f7aea;">●</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mockup-caption">Components List - Shows all components with Production & Shadow namespace/version</div>
+                    </div>
+
+                    <h3>Adding a New Component</h3>
+                    <ol class="steps">
+                        <li>Go to <strong>Components</strong> tab in Admin Panel</li>
+                        <li>Click <strong>"+ Add Component"</strong></li>
+                        <li>Fill in the component details (Name, Group, Status)</li>
+                        <li>Configure Production and Shadow URLs for auto version detection</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <!-- Mock Edit Component -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">Edit Component</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 20px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 16px;">Edit Component</h3>
+                            
+                            <div class="mock-input-label">Name *</div>
+                            <div class="mock-input">888casino1.com</div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <div class="mock-input-label">Group</div>
+                                    <div class="mock-input">Europe</div>
+                                </div>
+                                <div>
+                                    <div class="mock-input-label">Status</div>
+                                    <div class="mock-input">Operational ▼</div>
+                                </div>
+                            </div>
+
+                            <div class="mock-section" style="margin-top: 20px;">
+                                <div class="mock-section-title">🟢 PRODUCTION - Auto Version Detection</div>
+                                <div class="mock-input-label">Production URL</div>
+                                <div class="mock-input" style="font-size: 11px;">https://sportswidget.888casino1.com/color.json</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                                    <div>
+                                        <div class="mock-input-label">Production Namespace</div>
+                                        <div class="mock-input" style="background: #f0fff4;">Green</div>
+                                    </div>
+                                    <div>
+                                        <div class="mock-input-label">Production Version</div>
+                                        <div class="mock-input" style="background: #f0fff4;">25.10.2.0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mock-section purple">
+                                <div class="mock-section-title">🟣 SHADOW - Auto Version Detection</div>
+                                <div class="mock-input-label">Shadow URL</div>
+                                <div class="mock-input" style="font-size: 11px;">https://sportswidget-preview.888casino1.com/color.json</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                                    <div>
+                                        <div class="mock-input-label">Shadow Namespace</div>
+                                        <div class="mock-input" style="background: #faf5ff;">Blue</div>
+                                    </div>
+                                    <div>
+                                        <div class="mock-input-label">Shadow Version</div>
+                                        <div class="mock-input" style="background: #faf5ff;">25.11.1.0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <span class="mock-btn">Save</span>
+                                <span class="mock-btn mock-btn-secondary">Cancel</span>
+                            </div>
+                        </div>
+                        <div class="mockup-caption">Edit Component - Configure Production (green) and Shadow (purple) version URLs</div>
+                    </div>
+
+                    <h3>Component Statuses</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Badge</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operational</td>
+                                <td>Service running normally</td>
+                                <td><span class="status-badge status-operational">OPERATIONAL</span></td>
+                            </tr>
+                            <tr>
+                                <td>Degraded</td>
+                                <td>Service slow or partially affected</td>
+                                <td><span class="status-badge status-degraded">DEGRADED</span></td>
+                            </tr>
+                            <tr>
+                                <td>Partial Outage</td>
+                                <td>Some features unavailable</td>
+                                <td><span class="status-badge status-partial">PARTIAL OUTAGE</span></td>
+                            </tr>
+                            <tr>
+                                <td>Major Outage</td>
+                                <td>Service is down</td>
+                                <td><span class="status-badge status-major">MAJOR OUTAGE</span></td>
+                            </tr>
+                            <tr>
+                                <td>Potential Outage</td>
+                                <td>Version URL unreachable (auto-detected)</td>
+                                <td><span class="status-badge status-potential">POTENTIAL OUTAGE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Version Detection -->
+                <section id="version-detection">
+                    <h2>🔄 Auto Version Detection</h2>
+                    <p>The system automatically checks version URLs every <strong>5 minutes</strong> and extracts namespace and version information for both Production and Shadow environments.</p>
+
+                    <h3>How It Works</h3>
+                    <ol class="steps">
+                        <li>Enter the <strong>Production URL</strong> (e.g., https://sportswidget.example.com/color.json)</li>
+                        <li>Click <strong>"Test URL"</strong> to verify it returns valid data</li>
+                        <li>Enter the <strong>Shadow URL</strong> for the preview environment</li>
+                        <li>Click <strong>"Test URL"</strong> to verify</li>
+                        <li>Save the component - versions will auto-update every 5 minutes</li>
+                    </ol>
+
+                    <h3>Expected JSON Format</h3>
+                    <p>The version URL should return JSON in this format:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>JSON Field</th>
+                                <th>Example Value</th>
+                                <th>Extracted As</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>namespace</code></td>
+                                <td>mojito-example-<strong>green</strong></td>
+                                <td>Namespace: <span class="namespace-badge namespace-green">green</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>staticImageTag</code></td>
+                                <td><strong>25.10.2.0</strong>-abc123</td>
+                                <td>Version: 25.10.2.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <div>
+                            <strong>Automatic Status Change</strong><br>
+                            If a version URL becomes unreachable, the component status automatically changes to <span class="status-badge status-potential">POTENTIAL OUTAGE</span>. It returns to Operational when the URL is reachable again.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Incidents -->
+                <section id="incidents">
+                    <h2>🚨 Incident Management</h2>
+                    <p>Create and manage incidents to communicate service disruptions to users. Track timeline, root cause, and resolution.</p>
+
+                    <!-- Mock Incidents List -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">Admin Panel - Incidents</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="margin: 0; font-size: 16px;">Incidents</h3>
+                                <span class="mock-btn">+ Create Incident</span>
+                            </div>
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Impact</th>
+                                        <th>Status</th>
+                                        <th>Started</th>
+                                        <th>Resolved</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Database connectivity issues</strong></td>
+                                        <td><span class="status-badge status-major">P1</span></td>
+                                        <td><span class="status-badge status-operational">resolved</span></td>
+                                        <td>Dec 10, 2025 14:30</td>
+                                        <td>Dec 10, 2025 15:45</td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>API latency degradation</strong></td>
+                                        <td><span class="status-badge status-partial">P2</span></td>
+                                        <td><span class="status-badge status-degraded">monitoring</span></td>
+                                        <td>Dec 11, 2025 09:15</td>
+                                        <td>-</td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mockup-caption">Incidents List - View all incidents with status and impact level</div>
+                    </div>
+
+                    <h3>Creating an Incident</h3>
+                    <ol class="steps">
+                        <li>Go to <strong>Incidents</strong> tab</li>
+                        <li>Click <strong>"+ Create Incident"</strong></li>
+                        <li>Fill in incident details (Title, Impact, Status)</li>
+                        <li>Select affected components</li>
+                        <li>Add summary, root cause, and resolution notes</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <h3>Impact Levels</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Description</th>
+                                <th>Use When</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="status-badge status-major">P1</span></td>
+                                <td>Critical</td>
+                                <td>Widespread outage, major business impact</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge status-partial">P2</span></td>
+                                <td>Moderate</td>
+                                <td>Limited impact, non-critical features affected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Using AI to Fill Incident Details</h3>
+                    <ol class="steps">
+                        <li>Click <strong>"🤖 Upload Details"</strong> button</li>
+                        <li>Paste incident details from email, Slack, or ticket</li>
+                        <li>Select AI Provider (Groq or Google Gemini)</li>
+                        <li>Enter your API key (free from provider)</li>
+                        <li>Click <strong>"Process with AI"</strong></li>
+                        <li>Review and accept/reject each suggestion</li>
+                    </ol>
+
+                    <div class="alert alert-success">
+                        <span>📄</span>
+                        <div>
+                            <strong>PDF Export</strong><br>
+                            Click "Preview PDF" on any incident to generate a professional PDF report for sharing with stakeholders.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Maintenance -->
+                <section id="maintenance">
+                    <h2>🔧 Scheduled Maintenance</h2>
+                    <p>Plan and announce maintenance windows to inform users about upcoming service interruptions.</p>
+
+                    <!-- Mock Maintenance List -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">Admin Panel - Maintenance</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="margin: 0; font-size: 16px;">Scheduled Maintenance</h3>
+                                <span class="mock-btn">+ Schedule Maintenance</span>
+                            </div>
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Database upgrade</strong></td>
+                                        <td>Dec 15, 2025 02:00</td>
+                                        <td>Dec 15, 2025 04:00</td>
+                                        <td><span class="status-badge" style="background: #bee3f8; color: #2c5282;">scheduled</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Network infrastructure update</strong></td>
+                                        <td>Dec 20, 2025 01:00</td>
+                                        <td>Dec 20, 2025 05:00</td>
+                                        <td><span class="status-badge" style="background: #bee3f8; color: #2c5282;">scheduled</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mockup-caption">Scheduled Maintenance - View all planned maintenance windows</div>
+                    </div>
+
+                    <h3>Creating a Maintenance Window</h3>
+                    <ol class="steps">
+                        <li>Go to <strong>Maintenance</strong> tab</li>
+                        <li>Click <strong>"+ Schedule Maintenance"</strong></li>
+                        <li>Enter title and description</li>
+                        <li>Set start and end times</li>
+                        <li>Select affected components</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <h3>Maintenance Statuses</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="status-badge" style="background: #bee3f8; color: #2c5282;">SCHEDULED</span></td>
+                                <td>Maintenance is planned for the future</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge status-degraded">IN PROGRESS</span></td>
+                                <td>Maintenance is currently ongoing</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge status-operational">COMPLETED</span></td>
+                                <td>Maintenance has finished</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Users -->
+                <section id="users">
+                    <h2>👥 User Management</h2>
+                    <p>Manage admin users who can access the admin panel.</p>
+
+                    <!-- Mock User Management -->
+                    <div class="mockup">
+                        <div class="mockup-header">
+                            <span class="mockup-dot red"></span>
+                            <span class="mockup-dot yellow"></span>
+                            <span class="mockup-dot green"></span>
+                            <span style="margin-left: 10px; font-size: 12px; color: #718096;">Admin Panel - Settings</span>
+                        </div>
+                        <div class="mockup-content" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="margin: 0; font-size: 16px;">User Management</h3>
+                                <span class="mock-btn">+ Add User</span>
+                            </div>
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>admin</strong></td>
+                                        <td>admin@example.com</td>
+                                        <td>Admin</td>
+                                        <td><span class="status-badge status-operational">active</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ops_team</strong></td>
+                                        <td>ops@example.com</td>
+                                        <td>Admin</td>
+                                        <td><span class="status-badge status-operational">active</span></td>
+                                        <td><span class="mock-btn-secondary mock-btn" style="font-size: 10px; padding: 4px 8px;">Edit</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mockup-caption">Settings - User Management section</div>
+                    </div>
+
+                    <h3>Adding a New User</h3>
+                    <ol class="steps">
+                        <li>Go to <strong>Settings</strong> tab</li>
+                        <li>Click <strong>"+ Add User"</strong></li>
+                        <li>Enter username, email, and password</li>
+                        <li>Select role (Admin)</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <div class="alert alert-warning">
+                        <span>⚠️</span>
+                        <div>
+                            <strong>Security Reminder</strong><br>
+                            Always use strong passwords and change default credentials after initial setup.
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="footer">
+                <p><strong>Status Page System</strong> - User Guide</p>
+                <p style="margin-top: 10px; font-size: 12px; color: #a0aec0;">Built for Operations Teams</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">
+        🖨️ Print / Save as PDF
+    </button>
+</body>
+</html>

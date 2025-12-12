@@ -116,6 +116,24 @@ const createTables = async () => {
               console.error('Error adding shadow_status column to components:', alterErr);
             }
           });
+          // Add website_url column if it doesn't exist (for existing databases)
+          db.run(`ALTER TABLE components ADD COLUMN website_url TEXT`, (alterErr) => {
+            if (alterErr && !alterErr.message.includes('duplicate column')) {
+              console.error('Error adding website_url column to components:', alterErr);
+            }
+          });
+          // Add website_status column if it doesn't exist (for existing databases)
+          db.run(`ALTER TABLE components ADD COLUMN website_status TEXT DEFAULT 'operational'`, (alterErr) => {
+            if (alterErr && !alterErr.message.includes('duplicate column')) {
+              console.error('Error adding website_status column to components:', alterErr);
+            }
+          });
+          // Add website_last_checked column if it doesn't exist (for existing databases)
+          db.run(`ALTER TABLE components ADD COLUMN website_last_checked DATETIME`, (alterErr) => {
+            if (alterErr && !alterErr.message.includes('duplicate column')) {
+              console.error('Error adding website_last_checked column to components:', alterErr);
+            }
+          });
         }
       });
 

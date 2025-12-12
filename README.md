@@ -1,256 +1,395 @@
-# `node-gyp` - Node.js native addon build tool
+# 🚦 Status Page System
 
-[![Build Status](https://github.com/nodejs/node-gyp/workflows/Tests/badge.svg?branch=master)](https://github.com/nodejs/node-gyp/actions?query=workflow%3ATests+branch%3Amaster)
-![npm](https://img.shields.io/npm/dm/node-gyp)
+A comprehensive, real-time status monitoring system for tracking service health, incidents, and version deployments across multiple environments (Production & Shadow).
 
-`node-gyp` is a cross-platform command-line tool written in Node.js for
-compiling native addon modules for Node.js. It contains a vendored copy of the
-[gyp-next](https://github.com/nodejs/gyp-next) project that was previously used
-by the Chromium team, extended to support the development of Node.js native addons.
+![Status Page](https://img.shields.io/badge/Status-Operational-green) ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![License](https://img.shields.io/badge/License-MIT-blue)
 
-Note that `node-gyp` is _not_ used to build Node.js itself.
+---
 
-Multiple target versions of Node.js are supported (i.e. `0.8`, ..., `4`, `5`, `6`,
-etc.), regardless of what version of Node.js is actually installed on your system
-(`node-gyp` downloads the necessary development files or headers for the target version).
+## 📋 Overview
 
-## Features
+The **Status Page System** is a self-hosted solution for monitoring and displaying the operational status of your services. It provides:
 
- * The same build commands work on any of the supported platforms
- * Supports the targeting of different versions of Node.js
+- **Real-time component monitoring** with automatic version detection
+- **Production & Shadow environment tracking** - Compare versions across environments
+- **Incident management** with timeline updates
+- **Scheduled maintenance** announcements
+- **Admin panel** for easy management
+- **Public status page** for stakeholders and users
 
-## Installation
+---
 
-You can install `node-gyp` using `npm`:
+## ✨ Features
 
-``` bash
-npm install -g node-gyp
-```
+### 🔄 Auto Version Detection
+- Automatically fetches version info from JSON endpoints every 5 minutes
+- Tracks both **Production** and **Shadow** environments
+- Extracts namespace (color) and version numbers
+- Sets components to "Potential Outage" if URLs become unreachable
 
-Depending on your operating system, you will need to install:
+### 🎨 Dynamic Namespace Colors
+- Namespace badges are color-coded based on their value (blue, green, red, etc.)
+- Visual differentiation between Production and Shadow environments
 
-### On Unix
+### 📊 Component Management
+- Add, edit, and delete components
+- Group components by category
+- Set visibility (show/hide on public page)
+- Manual or auto-detected version tracking
 
-   * Python v3.6, v3.7, v3.8, or v3.9
-   * `make`
-   * A proper C/C++ compiler toolchain, like [GCC](https://gcc.gnu.org)
+### 🚨 Incident Management
+- Create and track incidents with severity levels (P1/P2)
+- Timeline-based status updates
+- AI-powered incident detail extraction (Groq/Gemini integration)
+- PDF export for incident reports
+- Public/Internal visibility settings
 
-### On macOS
+### 🔧 Scheduled Maintenance
+- Plan and announce maintenance windows
+- Associate affected components
+- Track maintenance status (Scheduled → In Progress → Completed)
 
-**ATTENTION**: If your Mac has been _upgraded_ to macOS Catalina (10.15), please read [macOS_Catalina.md](macOS_Catalina.md).
+### 👥 User Management
+- Multiple admin users support
+- Secure authentication with JWT tokens
+- Password management
 
-   * Python v3.6, v3.7, v3.8, or v3.9
-   * [Xcode](https://developer.apple.com/xcode/download/)
-     * You also need to install the `XCode Command Line Tools` by running `xcode-select --install`. Alternatively, if you already have the full Xcode installed, you can find them under the menu `Xcode -> Open Developer Tool -> More Developer Tools...`. This step will install `clang`, `clang++`, and `make`.
+---
 
-### On Windows
+## 🚀 Getting Started
 
-Install the current version of Python from the [Microsoft Store package](https://docs.python.org/3/using/windows.html#the-microsoft-store-package).
+### Prerequisites
+- Node.js 18 or higher
+- npm (Node Package Manager)
 
-Install tools and configuration manually:
-   * Install Visual C++ Build Environment: [Visual Studio Build Tools](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools)
-   (using "Visual C++ build tools" workload) or [Visual Studio Community](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community)
-   (using the "Desktop development with C++" workload)
-   * Launch cmd, `npm config set msvs_version 2017`
+### Installation
 
-   If the above steps didn't work for you, please visit [Microsoft's Node.js Guidelines for Windows](https://github.com/Microsoft/nodejs-guidelines/blob/master/windows-environment.md#compiling-native-addon-modules) for additional tips.
+1. **Clone/Download the repository**
 
-   To target native ARM64 Node.js on Windows 10 on ARM, add the components "Visual C++ compilers and libraries for ARM64" and "Visual C++ ATL for ARM64".
+2. **Install dependencies**
+   ```bash
+   cd "Status Page"
+   npm install
+   ```
 
-### Configuring Python Dependency
+3. **Start the server**
+   ```bash
+   npm start
+   ```
 
-`node-gyp` requires that you have installed a compatible version of Python, one of: v3.6, v3.7,
-v3.8, or v3.9. If you have multiple Python versions installed, you can identify which Python
-version `node-gyp` should use in one of the following ways:
+4. **Access the application**
+   - Public Status Page: `http://localhost:3000`
+   - Admin Panel: `http://localhost:3000/admin.html`
 
-1. by setting the `--python` command-line option, e.g.:
+### Default Credentials
+- **Username:** `admin`
+- **Password:** `admin123`
 
-``` bash
-node-gyp <command> --python /path/to/executable/python
-```
+> ⚠️ **Important:** Change the default password after first login!
 
-2. If `node-gyp` is called by way of `npm`, *and* you have multiple versions of
-Python installed, then you can set `npm`'s 'python' config key to the appropriate
-value:
+---
 
-``` bash
-npm config set python /path/to/executable/python
-```
+## 📖 User Manual
 
-3. If the `PYTHON` environment variable is set to the path of a Python executable,
-then that version will be used, if it is a compatible version.
+### 1. Admin Panel Login
 
-4. If the `NODE_GYP_FORCE_PYTHON` environment variable is set to the path of a
-Python executable, it will be used instead of any of the other configured or
-builtin Python search paths. If it's not a compatible version, no further
-searching will be done.
+1. Navigate to `http://localhost:3000/admin.html`
+2. Enter your username and password
+3. Click "Login"
 
-### Build for Third Party Node.js Runtimes
+### 2. Managing Components
 
-When building modules for thid party Node.js runtimes like Electron, which have
-different build configurations from the official Node.js distribution, you
-should use `--dist-url` or `--nodedir` flags to specify the headers of the
-runtime to build for.
+#### Adding a New Component
 
-Also when `--dist-url` or `--nodedir` flags are passed, node-gyp will use the
-`config.gypi` shipped in the headers distribution to generate build
-configurations, which is different from the default mode that would use the
-`process.config` object of the running Node.js instance.
+1. Go to **Components** tab
+2. Click **"+ Add Component"**
+3. Fill in the details:
+   - **Name**: Component display name (e.g., "888casino1.com")
+   - **Group**: Category grouping (e.g., "Europe", "US", "LATAM")
+   - **Status**: Current operational status
+   - **Sort Order**: Display order (lower numbers appear first)
+   - **Version (Manual)**: Optional manual version entry
 
-Some old versions of Electron shipped malformed `config.gypi` in their headers
-distributions, and you might need to pass `--force-process-config` to node-gyp
-to work around configuration errors.
+#### Setting Up Auto Version Detection
 
-## How to Use
+1. In the component form, find the **PRODUCTION** section (green)
+2. Enter the **Production URL** (e.g., `https://sportswidget.example.com/color.json`)
+3. Click **"Test URL"** to verify it works
+4. For Shadow environment, fill in the **SHADOW** section (purple)
+5. Click **Save**
 
-To compile your native addon, first go to its root directory:
-
-``` bash
-cd my_node_addon
-```
-
-The next step is to generate the appropriate project build files for the current
-platform. Use `configure` for that:
-
-``` bash
-node-gyp configure
-```
-
-Auto-detection fails for Visual C++ Build Tools 2015, so `--msvs_version=2015`
-needs to be added (not needed when run by npm as configured above):
-``` bash
-node-gyp configure --msvs_version=2015
-```
-
-__Note__: The `configure` step looks for a `binding.gyp` file in the current
-directory to process. See below for instructions on creating a `binding.gyp` file.
-
-Now you will have either a `Makefile` (on Unix platforms) or a `vcxproj` file
-(on Windows) in the `build/` directory. Next, invoke the `build` command:
-
-``` bash
-node-gyp build
-```
-
-Now you have your compiled `.node` bindings file! The compiled bindings end up
-in `build/Debug/` or `build/Release/`, depending on the build mode. At this point,
-you can require the `.node` file with Node.js and run your tests!
-
-__Note:__ To create a _Debug_ build of the bindings file, pass the `--debug` (or
-`-d`) switch when running either the `configure`, `build` or `rebuild` commands.
-
-## The `binding.gyp` file
-
-A `binding.gyp` file describes the configuration to build your module, in a
-JSON-like format. This file gets placed in the root of your package, alongside
-`package.json`.
-
-A barebones `gyp` file appropriate for building a Node.js addon could look like:
-
-```python
+**Expected JSON format from URL:**
+```json
 {
-  "targets": [
-    {
-      "target_name": "binding",
-      "sources": [ "src/binding.cc" ]
-    }
-  ]
+  "namespace": "mojito-example-green",
+  "staticImageTag": "25.10.2.0-abc123"
 }
 ```
 
-## Further reading
+The system extracts:
+- **Namespace**: Last part after hyphen (e.g., "green")
+- **Version**: First part before hyphen (e.g., "25.10.2.0")
 
-The **[docs](./docs/)** directory contains additional documentation on specific node-gyp topics that may be useful if you are experiencing problems installing or building addons using node-gyp.
+#### Component Statuses
 
-Some additional resources for Node.js native addons and writing `gyp` configuration files:
+| Status | Description | Color |
+|--------|-------------|-------|
+| Operational | Service is running normally | 🟢 Green |
+| Degraded | Service is slow or partially affected | 🟡 Yellow |
+| Partial Outage | Some features unavailable | 🟠 Orange |
+| Major Outage | Service is down | 🔴 Red |
+| Potential Outage | Version URL unreachable | 🔴 Red (pulsing) |
 
- * ["Going Native" a nodeschool.io tutorial](http://nodeschool.io/#goingnative)
- * ["Hello World" node addon example](https://github.com/nodejs/node/tree/master/test/addons/hello-world)
- * [gyp user documentation](https://gyp.gsrc.io/docs/UserDocumentation.md)
- * [gyp input format reference](https://gyp.gsrc.io/docs/InputFormatReference.md)
- * [*"binding.gyp" files out in the wild* wiki page](./docs/binding.gyp-files-in-the-wild.md)
+### 3. Managing Incidents
 
-## Commands
+#### Creating an Incident
 
-`node-gyp` responds to the following commands:
+1. Go to **Incidents** tab
+2. Click **"+ Create Incident"**
+3. Fill in the details:
+   - **Incident Number**: Auto-generated or custom (e.g., "INC-001")
+   - **Title**: Brief description
+   - **Impact**: P1 (Critical) or P2 (Moderate)
+   - **Status**: Identified → Monitoring → Resolved
+   - **Visibility**: Public or Internal
+   - **Start/End Time**: When the incident occurred
+4. Select **Affected Components**
+5. Add **Summary**, **Root Cause**, and **Resolution Notes**
+6. Click **Save**
 
-| **Command**   | **Description**
-|:--------------|:---------------------------------------------------------------
-| `help`        | Shows the help dialog
-| `build`       | Invokes `make`/`msbuild.exe` and builds the native addon
-| `clean`       | Removes the `build` directory if it exists
-| `configure`   | Generates project build files for the current platform
-| `rebuild`     | Runs `clean`, `configure` and `build` all in a row
-| `install`     | Installs Node.js header files for the given version
-| `list`        | Lists the currently installed Node.js header versions
-| `remove`      | Removes the Node.js header files for the given version
+#### Using AI to Fill Incident Details
 
+1. Click **"🤖 Upload Details"** button
+2. Paste incident details from email/Slack/ticket
+3. Select AI Provider (Groq or Gemini)
+4. Enter your API key (free from provider)
+5. Click **"Process with AI"**
+6. Review and accept/reject suggestions
 
-## Command Options
+#### Adding Updates to an Incident
 
-`node-gyp` accepts the following command options:
+1. Edit an existing incident
+2. Scroll to **Updates** section
+3. Enter update message
+4. Select new status
+5. Click **"Add Update"**
 
-| **Command**                       | **Description**
-|:----------------------------------|:------------------------------------------
-| `-j n`, `--jobs n`                | Run `make` in parallel. The value `max` will use all available CPU cores
-| `--target=v6.2.1`                 | Node.js version to build for (default is `process.version`)
-| `--silly`, `--loglevel=silly`     | Log all progress to console
-| `--verbose`, `--loglevel=verbose` | Log most progress to console
-| `--silent`, `--loglevel=silent`   | Don't log anything to console
-| `debug`, `--debug`                | Make Debug build (default is `Release`)
-| `--release`, `--no-debug`         | Make Release build
-| `-C $dir`, `--directory=$dir`     | Run command in different directory
-| `--make=$make`                    | Override `make` command (e.g. `gmake`)
-| `--thin=yes`                      | Enable thin static libraries
-| `--arch=$arch`                    | Set target architecture (e.g. ia32)
-| `--tarball=$path`                 | Get headers from a local tarball
-| `--devdir=$path`                  | SDK download directory (default is OS cache directory)
-| `--ensure`                        | Don't reinstall headers if already present
-| `--dist-url=$url`                 | Download header tarball from custom URL
-| `--proxy=$url`                    | Set HTTP(S) proxy for downloading header tarball
-| `--noproxy=$urls`                 | Set urls to ignore proxies when downloading header tarball
-| `--cafile=$cafile`                | Override default CA chain (to download tarball)
-| `--nodedir=$path`                 | Set the path to the node source code
-| `--python=$path`                  | Set path to the Python binary
-| `--msvs_version=$version`         | Set Visual Studio version (Windows only)
-| `--solution=$solution`            | Set Visual Studio Solution version (Windows only)
-| `--force-process-config`          | Force using runtime's `process.config` object to generate `config.gypi` file
+#### Exporting Incident to PDF
 
-## Configuration
+1. Open an incident
+2. Click **"📄 Preview PDF"**
+3. Review the formatted report
+4. Click **"Export PDF"**
 
-### Environment variables
+### 4. Scheduling Maintenance
 
-Use the form `npm_config_OPTION_NAME` for any of the command options listed
-above (dashes in option names should be replaced by underscores).
+1. Go to **Maintenance** tab
+2. Click **"+ Schedule Maintenance"**
+3. Fill in:
+   - **Title**: Maintenance description
+   - **Start/End Time**: Maintenance window
+   - **Affected Components**: Select components
+4. Click **Save**
 
-For example, to set `devdir` equal to `/tmp/.gyp`, you would:
+### 5. User Management
 
-Run this on Unix:
+1. Go to **Settings** tab
+2. Click **"+ Add User"**
+3. Enter username, email, and password
+4. Select role (Admin)
+5. Click **Save**
+
+---
+
+## 🌐 Public Status Page
+
+The public status page (`http://localhost:3000`) displays:
+
+### Components Section
+- All visible components with their status
+- Production and Shadow version info
+- Namespace badges with dynamic colors
+
+### Active Incidents
+- Current ongoing incidents
+- Real-time status updates
+- Impact severity indicators
+
+### Resolved Incidents
+- Collapsible list of past incidents
+- Full timeline when expanded
+
+### Scheduled Maintenance
+- Upcoming maintenance windows
+- Affected components
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+PORT=3000
+JWT_SECRET=your-secret-key-here
+NODE_ENV=production
+```
+
+### Version Check Interval
+
+The system checks version URLs every **5 minutes** by default. To change this, edit `backend/services/versionChecker.js`:
+
+```javascript
+// Check interval in milliseconds
+const CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+```
+
+---
+
+## 🚀 Deployment
+
+### Render.com
+
+1. Connect your Git repository
+2. Set **Root Directory** to `Status Page`
+3. Configure:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+4. Deploy
+
+### Docker (Optional)
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### PM2 (Production)
 
 ```bash
-export npm_config_devdir=/tmp/.gyp
+npm install -g pm2
+pm2 start server.js --name "status-page"
+pm2 save
+pm2 startup
 ```
 
-Or this on Windows:
+---
 
-```console
-set npm_config_devdir=c:\temp\.gyp
+## 📁 Project Structure
+
+```
+Status Page/
+├── server.js                 # Main entry point
+├── package.json              # Dependencies
+├── render.yaml               # Render deployment config
+├── .env                      # Environment variables
+├── .gitignore               # Git ignore rules
+│
+├── backend/
+│   ├── database.js          # SQLite database setup
+│   ├── middleware/
+│   │   └── auth.js          # JWT authentication
+│   ├── routes/
+│   │   ├── auth.js          # Login/logout routes
+│   │   ├── components.js    # Component CRUD
+│   │   ├── incidents.js     # Incident management
+│   │   ├── maintenances.js  # Maintenance windows
+│   │   ├── status.js        # Public status API
+│   │   ├── users.js         # User management
+│   │   └── webhooks.js      # Webhook integrations
+│   └── services/
+│       └── versionChecker.js # Auto version detection
+│
+├── frontend/
+│   ├── index.html           # Public status page
+│   ├── admin.html           # Admin panel
+│   ├── app.js               # Public page logic
+│   ├── admin.js             # Admin panel logic
+│   ├── styles.css           # Public page styles
+│   └── admin.css            # Admin panel styles
+│
+└── scripts/
+    ├── init-sample-data.js  # Sample data seeder
+    └── update-admin.js      # Admin password reset
 ```
 
-### `npm` configuration
+---
 
-Use the form `OPTION_NAME` for any of the command options listed above.
+## 🔒 Security
 
-For example, to set `devdir` equal to `/tmp/.gyp`, you would run:
+- Passwords are hashed using bcrypt
+- JWT tokens for session management
+- CORS enabled for API access
+- Input sanitization on all forms
 
+---
+
+## 📞 API Endpoints
+
+### Public Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/status` | Get overall status |
+| GET | `/api/components` | List all components |
+| GET | `/api/incidents` | List incidents |
+
+### Protected Endpoints (Require Auth)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Login |
+| POST | `/api/components` | Create component |
+| PATCH | `/api/components/:id` | Update component |
+| DELETE | `/api/components/:id` | Delete component |
+| POST | `/api/components/:id/check-version` | Check production version |
+| POST | `/api/components/:id/check-shadow-version` | Check shadow version |
+| POST | `/api/incidents` | Create incident |
+| PATCH | `/api/incidents/:id` | Update incident |
+| DELETE | `/api/incidents/:id` | Delete incident |
+
+---
+
+## 🐛 Troubleshooting
+
+### "Cannot find module 'express'"
 ```bash
-npm config set [--global] devdir /tmp/.gyp
+npm install
 ```
 
-**Note:** Configuration set via `npm` will only be used when `node-gyp`
-is run via `npm`, not when `node-gyp` is run directly.
+### Version URLs not updating
+1. Check if the URL returns valid JSON
+2. Verify the JSON format matches expected structure
+3. Check server logs for errors
 
-## License
+### Database reset
+```bash
+rm status_page.db
+npm start
+```
 
-`node-gyp` is available under the MIT license. See the [LICENSE
-file](LICENSE) for details.
+### Reset admin password
+```bash
+node scripts/update-admin.js
+```
+
+---
+
+## 📄 License
+
+MIT License - feel free to use and modify for your needs.
+
+---
+
+## 🤝 Support
+
+For issues or feature requests, please create an issue in the repository.
+
+---
+
+**Built with ❤️ for Operations Teams**

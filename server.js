@@ -14,6 +14,10 @@ const webhooksRoutes = require('./backend/routes/webhooks');
 const usersRoutes = require('./backend/routes/users');
 const { initVersionChecker } = require('./backend/services/versionChecker');
 
+// App version - update this when deploying new versions
+const APP_VERSION = '1.0.7';
+const BUILD_DATE = new Date().toISOString();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -33,6 +37,15 @@ app.use('/api/incidents', incidentsRoutes);
 app.use('/api/maintenances', maintenancesRoutes);
 app.use('/api/webhooks', webhooksRoutes);
 app.use('/api/users', usersRoutes);
+
+// Version endpoint
+app.get('/api/version', (req, res) => {
+  res.json({
+    version: APP_VERSION,
+    buildDate: BUILD_DATE,
+    nodeVersion: process.version
+  });
+});
 
 // Serve frontend for all non-API routes
 app.get('*', (req, res) => {

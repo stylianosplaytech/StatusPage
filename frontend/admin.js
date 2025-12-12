@@ -1014,6 +1014,14 @@ function renderComponents() {
                 ${shadowVersionSource === 'auto' ? '<span style="color: #9f7aea; font-size: 10px; margin-left: 4px;">●</span>' : ''}
             </td>
             <td>
+                ${comp.website_url ? `
+                    <span class="website-status ${comp.website_status === 'potential_outage' ? 'unreachable' : 'reachable'}">
+                        ${comp.website_status === 'potential_outage' ? '🔴' : '🟢'}
+                    </span>
+                    <a href="${escapeHtml(comp.website_url)}" target="_blank" title="${escapeHtml(comp.website_url)}" style="font-size: 11px; color: #4299e1;">Open ↗</a>
+                ` : '<span style="color: #a0aec0;">-</span>'}
+            </td>
+            <td>
                 <button onclick="editComponent(${comp.id})" class="btn btn-sm btn-secondary">Edit</button>
                 <button onclick="deleteComponent(${comp.id})" class="btn btn-sm btn-danger">Delete</button>
             </td>
@@ -1129,6 +1137,9 @@ function showComponentModal(componentId = null) {
         document.getElementById('componentShadowNamespace').value = comp.shadow_namespace || '';
         document.getElementById('componentShadowDetectedVersion').value = comp.shadow_detected_version || '';
         
+        // Website URL field
+        document.getElementById('componentWebsiteUrl').value = comp.website_url || '';
+        
         // Show last checked time for production if available
         if (comp.version_last_checked) {
             document.getElementById('versionLastChecked').style.display = 'block';
@@ -1139,6 +1150,17 @@ function showComponentModal(componentId = null) {
         if (comp.shadow_version_last_checked) {
             document.getElementById('shadowVersionLastChecked').style.display = 'block';
             document.getElementById('shadowVersionLastCheckedTime').textContent = formatDate(new Date(comp.shadow_version_last_checked));
+        }
+        
+        // Show website status if available
+        if (comp.website_url) {
+            document.getElementById('websiteLastChecked').style.display = 'block';
+            const statusDisplay = document.getElementById('websiteStatusDisplay');
+            statusDisplay.textContent = comp.website_status === 'potential_outage' ? '🔴 Unreachable' : '🟢 Reachable';
+            statusDisplay.style.color = comp.website_status === 'potential_outage' ? '#e53e3e' : '#38a169';
+            if (comp.website_last_checked) {
+                document.getElementById('websiteLastCheckedTime').textContent = formatDate(new Date(comp.website_last_checked));
+            }
         }
     } else {
         title.textContent = 'Add Component';
@@ -1156,6 +1178,11 @@ function showComponentModal(componentId = null) {
         document.getElementById('componentShadowVersionUrl').value = '';
         document.getElementById('componentShadowNamespace').value = '';
         document.getElementById('componentShadowDetectedVersion').value = '';
+        
+        // Reset website URL field
+        document.getElementById('componentWebsiteUrl').value = '';
+        document.getElementById('websiteLastChecked').style.display = 'none';
+        document.getElementById('websiteTestResult').style.display = 'none';
     }
 
     modal.style.display = 'block';
@@ -1172,7 +1199,8 @@ document.getElementById('componentForm').addEventListener('submit', async (e) =>
         version: document.getElementById('componentVersion').value || null,
         visible: document.getElementById('componentVisible').checked,
         version_url: document.getElementById('componentVersionUrl').value || null,
-        shadow_version_url: document.getElementById('componentShadowVersionUrl').value || null
+        shadow_version_url: document.getElementById('componentShadowVersionUrl').value || null,
+        website_url: document.getElementById('componentWebsiteUrl').value || null
     };
 
     try {
@@ -1338,6 +1366,108 @@ async function refreshComponentVersion(type = 'production') {
             alert(result.error || `Failed to refresh ${isProduction ? 'production' : 'shadow'} version`);
         }
     } catch (error) {
+        lastCheckedSpan.textContent = 'Refresh failed';
+        alert('Network error. Please try again.');
+    }
+}
+
+// Test website URL reachability
+async function testWebsiteUrl() {
+    const url = document.getElementById('componentWebsiteUrl').value;
+    const resultDiv = document.getElementById('websiteTestResult');
+    const contentDiv = document.getElementById('websiteTestContent');
+    
+    if (!url) {
+        alert('Please enter a website URL first');
+        return;
+    }
+    
+    resultDiv.style.display = 'block';
+    resultDiv.style.background = '#f7fafc';
+    resultDiv.style.borderColor = '#e2e8f0';
+    contentDiv.innerHTML = '<span style="color: #718096;">⏳ Testing website reachability...</span>';
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        
+        const response = await fetch(url, {
+            method: 'HEAD',
+            mode: 'no-cors',
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // If we get here, the request didn't throw, so the site is reachable
+        // Note: with 'no-cors' mode, we can't see the actual status
+        resultDiv.style.background = '#f0fff4';
+        resultDiv.style.borderColor = '#9ae6b4';
+        contentDiv.innerHTML = `
+            <div style="color: #38a169; font-weight: 500;">✓ Website appears to be reachable</div>
+            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Note: Full status verification happens on server-side checks</div>
+        `;
+    } catch (error) {
+        resultDiv.style.background = '#fff5f5';
+        resultDiv.style.borderColor = '#feb2b2';
+        contentDiv.innerHTML = `
+            <div style="color: #e53e3e; font-weight: 500;">✗ Website appears to be unreachable</div>
+            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Error: ${error.message || 'Connection failed'}</div>
+        `;
+    }
+}
+
+// Refresh website status for an existing component
+async function refreshWebsiteStatus() {
+    const componentId = document.getElementById('componentId').value;
+    
+    if (!componentId) {
+        alert('Please save the component first before refreshing');
+        return;
+    }
+    
+    const statusDisplay = document.getElementById('websiteStatusDisplay');
+    const lastCheckedSpan = document.getElementById('websiteLastCheckedTime');
+    
+    statusDisplay.textContent = '⏳ Checking...';
+    statusDisplay.style.color = '#718096';
+    lastCheckedSpan.textContent = 'Refreshing...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/components/${componentId}/rescan`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Reload component to get updated data
+            const compResponse = await fetch(`${API_BASE}/components`);
+            const components = await compResponse.json();
+            const component = components.find(c => c.id == componentId);
+            
+            if (component) {
+                statusDisplay.textContent = component.website_status === 'potential_outage' ? '🔴 Unreachable' : '🟢 Reachable';
+                statusDisplay.style.color = component.website_status === 'potential_outage' ? '#e53e3e' : '#38a169';
+                lastCheckedSpan.textContent = formatDate(new Date());
+            }
+            
+            // Reload components to update the list
+            await loadComponents();
+            
+            alert('Website status refreshed successfully!');
+        } else {
+            statusDisplay.textContent = '⚠️ Check failed';
+            statusDisplay.style.color = '#dd6b20';
+            lastCheckedSpan.textContent = 'Refresh failed';
+            alert(result.error || 'Failed to refresh website status');
+        }
+    } catch (error) {
+        statusDisplay.textContent = '⚠️ Error';
+        statusDisplay.style.color = '#e53e3e';
         lastCheckedSpan.textContent = 'Refresh failed';
         alert('Network error. Please try again.');
     }

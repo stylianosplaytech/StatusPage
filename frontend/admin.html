@@ -86,6 +86,7 @@
                             <th>🟢 Prod Ver</th>
                             <th>🟣 Shadow NS</th>
                             <th>🟣 Shadow Ver</th>
+                            <th>🌐 Website</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -381,6 +382,32 @@
                 <div id="shadowVersionLastChecked" style="font-size: 12px; color: #718096; margin-bottom: 15px; display: none;">
                     Last checked: <span id="shadowVersionLastCheckedTime">-</span>
                     <button type="button" onclick="refreshComponentVersion('shadow')" class="btn btn-sm" style="margin-left: 10px; padding: 4px 10px; font-size: 11px;">🔄 Refresh</button>
+                </div>
+                
+                <!-- PRODUCTION Website -->
+                <div class="form-section-divider" style="border-top: 2px solid #ed8936; margin: 20px 0; padding-top: 15px; background: linear-gradient(to right, #fffaf0, transparent); padding: 15px; border-radius: 8px;">
+                    <label style="font-weight: 600; color: #c05621; font-size: 14px;">🌐 PRODUCTION WEBSITE - Reachability Check</label>
+                </div>
+                
+                <div class="form-group">
+                    <label>Website URL</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="componentWebsiteUrl" placeholder="e.g. https://www.example.com" style="flex: 1;">
+                        <button type="button" onclick="testWebsiteUrl()" class="btn btn-secondary btn-sm" style="white-space: nowrap;">Test URL</button>
+                    </div>
+                    <small style="color: #718096; font-size: 12px; margin-top: 5px; display: block;">
+                        Website URL to check reachability. Status changes to "Potential Outage" if unreachable.
+                    </small>
+                </div>
+                
+                <div id="websiteTestResult" style="display: none; margin-top: 10px; padding: 12px; border-radius: 6px;">
+                    <div id="websiteTestContent"></div>
+                </div>
+                
+                <div id="websiteLastChecked" style="font-size: 12px; color: #718096; margin-bottom: 15px; display: none;">
+                    Website Status: <span id="websiteStatusDisplay">-</span> | 
+                    Last checked: <span id="websiteLastCheckedTime">-</span>
+                    <button type="button" onclick="refreshWebsiteStatus()" class="btn btn-sm" style="margin-left: 10px; padding: 4px 10px; font-size: 11px;">🔄 Refresh</button>
                 </div>
                 
                 <div class="form-group">
